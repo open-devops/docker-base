@@ -41,6 +41,7 @@ RUN set -x \
         openssh-client \
         curl \
         tar \
+        zip \
         unzip \
         bash \
         ttf-dejavu \

@@ -3,8 +3,19 @@
 # Pipeline Docker Base
 Base Image for Open DevOps Pipeline
 
-Pipeline Docker Base Image is a special Docker image that is configured for correct use within Open DevOps Pipeline. It is CentOS, plus:
+Pipeline Docker Base Image is a special Docker image that is configured for correct use within Open DevOps Pipeline. It is Alpine, plus:
 
-- OS Upgrade
-- JRE support
-- Common used Utilities
+- OpenJDK JRE
+- Utilities
+  - git
+  - subversion
+  - openssh-client
+  - curl
+  - tar
+  - zip
+  - unzip
+  - bash
+  - ttf-dejavu
+  - coreutils
+  - python
+  - pip
