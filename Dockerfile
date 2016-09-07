@@ -40,7 +40,6 @@ RUN set -x \
         subversion \
         openssh-client \
         curl \
-        zip \
         tar \
         unzip \
         bash \
