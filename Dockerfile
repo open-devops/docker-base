@@ -1,29 +1,39 @@
+
 #
-# Base Image for Open DevOps Pipeline
+# Base Docker Image for Open DevOps Pipeline
 #
-FROM centos
+# VERSION : 1.0
+#
+FROM alpine
+
 MAINTAINER Open DevOps Team <open.devops@gmail.com>
 
+ENV REFRESHED_AT 2016-09-01
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+# add a simple script that can auto-detect the appropriate JAVA_HOME value
+# based on whether the JDK or only the JRE is installed
+RUN { \
+		echo '#!/bin/sh'; \
+		echo 'set -e'; \
+		echo; \
+		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
+	} > /usr/local/bin/docker-java-home \
+	&& chmod +x /usr/local/bin/docker-java-home
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
+ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
+
 ENV JAVA_VERSION 8u92
-ENV BUILD_VERSION b14
+ENV JAVA_ALPINE_VERSION 8.92.14-r1
 
-# Upgrading system && Install Java
-RUN yum -y upgrade \
-    && yum -y install wget \
-    && wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/$JAVA_VERSION-$BUILD_VERSION/jdk-$JAVA_VERSION-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm \
-    && yum -y install /tmp/jdk-8-linux-x64.rpm \
-    && rm -rf /tmp/jdk-8-linux-x64.rpm \
-    && rm -rf /var/cache/yum/* \
-    && yum clean all \
-    && alternatives --install /usr/bin/java jar /usr/java/latest/bin/java 200000 \
-    && alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 200000 \
-    && alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
+RUN set -x \
+	&& apk add --no-cache \
+		openjdk8-jre="$JAVA_ALPINE_VERSION" \
+	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
-# Define working directory.
-WORKDIR /data
-
-# Define commonly used JAVA_HOME variable
-ENV JAVA_HOME /usr/java/latest
-
-# Define default command.
-CMD ["bash"]
+ADD https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/$ES_VERSION/elasticsearch-$ES_VERSION.tar.gz /tmp/es.tgz
+RUN cd /usr/share && \
+  tar xf /tmp/es.tgz && \
+  rm /tmp/es.tgz
