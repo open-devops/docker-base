@@ -7,6 +7,7 @@ Pipeline Docker Base Image is a special Docker image that is configured for corr
 
 - OpenJDK JRE
 - Utilities
+  - gnupg
   - git
   - subversion
   - openssh-client

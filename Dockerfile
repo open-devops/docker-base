@@ -36,6 +36,7 @@ RUN set -x \
 # Install utility tools
 RUN set -x \
     && apk add --no-cache \
+        gnupg \
         git \
         subversion \
         openssh-client \
