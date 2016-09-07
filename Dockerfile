@@ -1,14 +1,13 @@
-
 #
 # Base Docker Image for Open DevOps Pipeline
 #
 # VERSION : 1.0
 #
-FROM alpine
+FROM alpine:3.4
 
 MAINTAINER Open DevOps Team <open.devops@gmail.com>
 
-ENV REFRESHED_AT 2016-09-01
+ENV REFRESHED_AT 2016-09-09
 
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
@@ -28,12 +27,27 @@ ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openj
 ENV JAVA_VERSION 8u92
 ENV JAVA_ALPINE_VERSION 8.92.14-r1
 
+# Install JRE
 RUN set -x \
-	&& apk add --no-cache \
+    && apk add --no-cache \
 		openjdk8-jre="$JAVA_ALPINE_VERSION" \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
-ADD https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/$ES_VERSION/elasticsearch-$ES_VERSION.tar.gz /tmp/es.tgz
-RUN cd /usr/share && \
-  tar xf /tmp/es.tgz && \
-  rm /tmp/es.tgz
+# Install utility tools
+RUN set -x \
+    && apk add --no-cache \
+        git \
+        subversion \
+        openssh-client \
+        curl \
+        zip \
+        tar \
+        unzip \
+        bash \
+        ttf-dejavu \
+        coreutils \
+        python \
+    && python -m ensurepip \
+    && rm -r /usr/lib/python*/ensurepip \
+    && pip install --upgrade pip setuptools \
+    && rm -r /root/.cache
